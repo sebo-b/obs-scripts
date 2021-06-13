@@ -13,7 +13,7 @@ schedule_data = {
 --	["11:00"] = { text_field, "field3_to_be_shown"}
 
 	["timer"] = {
-		["13:00"] = {"dyntext", "faktoid","color"},
+		["13:00"] = {"dyntext", "factoid","color"},
 		["14:00"] = {"dyntext 2", "pres1" },
 	 	["15:00"] = {"dyntext 2", "pres2" },
 	 	["20:01"] = {"", "after"}
@@ -27,19 +27,18 @@ schedule_data = {
 }
 
 eventMargin = 5*60	-- margin in seconds to still show "soon" instead of switching to the next event
-timezone = "CEST"	-- used only for display purposes (can be nil), for all other purposes we simply use local time and timezone
-clock24 = false		-- used only for display purposes, 24 or 12 hour clock
 
 -- Format:
 --   [ time to event in seconds ] = "message"
 --   message can include:
- --    <EVENT_TIME> - time of the event, eg. "10:00 AM CEST"
+ --    <EVENT_TIME> - time of the event, eg. "10:00 AM"
+ --    <EVENT_TIME24> - time of the event, eg. "14:00"
  --    <TTE_HOURS> - number of hours to the event
  --    <TTE_MINUTES> - number of minutes to the event
  --    <TTE_SECONDS> - number of seconds to the event
 
 schedule_messages = {
-	[24*3600] = "Starting at\n<EVENT_TIME>",
+	[24*3600] = "Starting at\n<EVENT_TIME> CEST",
 	[10*60] = "Starting in\n<TTE_MINUTES> minutes",
 	[2*60] = "Starting soon",
 }
@@ -96,7 +95,7 @@ function util.mktimeFromString(str)
 
 end
 
-function util.formatTime(timestamp,expanded)
+function util.formatTime(timestamp,expanded,clock24)
 
 	local ts = timestamp
 
@@ -121,12 +120,7 @@ function util.formatTime(timestamp,expanded)
 			hour = hour % 12
 		end
 
-		local locTZ = ""
-		if timezone ~= nil then
-			locTZ = " " .. timezone
-		end
-
-		return string.format("%02d:%02d", hour, min) .. pm .. locTZ
+		return string.format("%02d:%02d", hour, min) .. pm
 
 	else
 		return string.format("%02d:%02d:%02d (ts=%d)", hour, min, sec, timestamp)
@@ -258,7 +252,8 @@ function onTimer()
 
 		local tteStr = schedule_messages[smKey]
 		local tteH, tteM, tteS = math.floor(tte / 3600), math.floor(tte/60) % 60, tte%60
-		tteStr = string.gsub (tteStr, "<EVENT_TIME>", util.formatTime(currentEventTime) )
+		tteStr = string.gsub (tteStr, "<EVENT_TIME>", util.formatTime(currentEventTime,false,false) )
+		tteStr = string.gsub (tteStr, "<EVENT_TIME24>", util.formatTime(currentEventTime,false,true) )
 		tteStr = string.gsub (tteStr, "<TTE_HOURS>", tteH )
 		tteStr = string.gsub (tteStr, "<TTE_MINUTES>", tteM )
 		tteStr = string.gsub (tteStr, "<TTE_SECONDS>", tteS )

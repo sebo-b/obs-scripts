@@ -45,8 +45,8 @@ You define a scene, then the time and list of scene items to be shown. Items def
 
 So the above configuration will show on `timer` scene:
 - before 12:50 (10*60 sec) message: `Starting at 01:00 PM CEST`,
-- from 12:50 to 12:58 (2*60 sec) message: `Starting in XXX minutes`,
-- from 12:58 up until you don't switch the scene: `Starting soon`.
+- from 12:50 (10*60 sec) to 12:58 (2*60 sec) message: `Starting in XXX minutes`,
+- from 12:58 up until you switch the scene: `Starting soon`.
 
 Then the same for the event at 14:00 and 15:00. The last event at 20:01 is a dummy event to show after the event slide.
 
